@@ -1,6 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import Image from 'next/image';
 
 const testimonials = [
   {
@@ -45,11 +46,13 @@ export default function Testimonials() {
               className="bg-white p-8 rounded-2xl shadow-lg"
             >
               <div className="flex items-center mb-6">
-                <div className="w-16 h-16 rounded-full overflow-hidden mr-4">
-                  <img
+                <div className="w-16 h-16 rounded-full overflow-hidden mr-4 relative">
+                  <Image
                     src={testimonial.image}
                     alt={testimonial.name}
-                    className="w-full h-full object-cover"
+                    fill
+                    className="object-cover"
+                    sizes="64px"
                   />
                 </div>
                 <div>
@@ -58,7 +61,7 @@ export default function Testimonials() {
                 </div>
               </div>
               <blockquote>
-                <p className="text-gray-600 italic">"{testimonial.quote}"</p>
+                <p className="text-gray-600 italic">&ldquo;{testimonial.quote}&rdquo;</p>
               </blockquote>
             </motion.div>
           ))}
