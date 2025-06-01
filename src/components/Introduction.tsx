@@ -5,17 +5,36 @@ import { useEffect, useState } from 'react';
 import { getAboutContent } from '@/lib/contentful';
 import Image from 'next/image';
 
+// Default image URL for fallback
+const DEFAULT_IMAGE_URL = "https://images.unsplash.com/photo-1600880292203-757bb62b4baf?auto=format&fit=crop&w=800&q=80";
+
 export default function About() {
-  const [aboutData, setAboutData] = useState({
+  // State for about section data with initial values
+  const [aboutData, setAboutData] = useState<{
+    title: string;
+    description: string;
+    image: string | null;
+  }>({
     title: "Your Trusted Partner in Financial Success!",
-    description: "At FinAnalystPro, we combine deep financial expertise with cutting-edge analytics to provide you with actionable insights and strategies for sustainable growth!"
+    description: "At FinAnalystPro, we combine deep financial expertise with cutting-edge analytics to provide you with actionable insights and strategies for sustainable growth!",
+    image: null,
   });
 
+  // Track loading state
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Fetch content from Contentful on component mount
   useEffect(() => {
     async function loadAboutContent() {
-      const content = await getAboutContent();
-      if (content) {
-        setAboutData(content);
+      try {
+        const content = await getAboutContent();
+        if (content) {
+          setAboutData(content as { title: string; description: string; image: string | null });
+        }
+      } catch (error) {
+        console.error('Error loading about content:', error);
+      } finally {
+        setIsLoading(false);
       }
     }
 
@@ -26,6 +45,7 @@ export default function About() {
     <section id="about" className="py-20 bg-white">
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          {/* Left column with text content */}
           <motion.div
             initial={{ opacity: 0, x: -50 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -50,6 +70,7 @@ export default function About() {
             </div>
           </motion.div>
 
+          {/* Right column with image and quote */}
           <motion.div
             initial={{ opacity: 0, x: 50 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -57,14 +78,34 @@ export default function About() {
             viewport={{ once: true }}
             className="relative"
           >
-            <div className="aspect-square rounded-2xl overflow-hidden relative">
-              <Image
-                src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?auto=format&fit=crop&w=800&q=80"
-                alt="Financial Team"
-                fill
-                className="object-cover"
-                sizes="(max-width: 768px) 100vw, 50vw"
-              />
+            <div className="aspect-square rounded-2xl overflow-hidden relative bg-gray-100">
+              {isLoading ? (
+                // Loading skeleton
+                <div className="absolute inset-0 bg-gray-200 animate-pulse" />
+              ) : aboutData.image ? (
+                <Image
+                  src={aboutData.image}
+                  alt="Financial Team"
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  priority
+                  onError={(e) => {
+                    const imgElement = e.target as HTMLImageElement;
+                    imgElement.src = DEFAULT_IMAGE_URL;
+                  }}
+                />
+              ) : (
+                // Fallback image only shown if there's an error or no image from Contentful
+                <Image
+                  src={DEFAULT_IMAGE_URL}
+                  alt="Financial Team"
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  priority
+                />
+              )}
             </div>
             <div className="absolute -bottom-6 -left-6 bg-blue-600 text-white p-8 rounded-xl">
               <p className="text-lg font-semibold">
