@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import { getIntroduction } from '@/lib/contentful';
+import Image from 'next/image';
 
 type IntroContent = {
   title: string;
@@ -78,16 +79,18 @@ export default function About() {
             viewport={{ once: true }}
             className="relative"
           >
-            <div className="aspect-square rounded-2xl overflow-hidden">
-              <img
+            <div className="aspect-square rounded-2xl overflow-hidden relative">
+              <Image
                 src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?auto=format&fit=crop&w=800&q=80"
                 alt="Financial Team"
-                className="w-full h-full object-cover"
+                fill
+                className="object-cover"
+                sizes="(max-width: 768px) 100vw, 50vw"
               />
             </div>
             <div className="absolute -bottom-6 -left-6 bg-blue-600 text-white p-8 rounded-xl">
               <p className="text-lg font-semibold">
-                "Expert financial guidance for your business success"
+                &ldquo;Expert financial guidance for your business success&rdquo;
               </p>
             </div>
           </motion.div>

@@ -38,3 +38,16 @@ export async function getServicesContent() {
     return null;
   }
 } 
+
+export async function getIntroduction() {
+  try {
+    const entry = await client.getEntry('YOUR_INTRODUCTION_ENTRY_ID');
+    return {
+      title: entry.fields.title as string,
+      content: entry.fields.content as string,
+    };
+  } catch (error) {
+    console.error('Error fetching introduction content:', error);
+    return null;
+  }
+} 
